@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Get location</title>
+    <link rel="stylesheet" href="css/locationStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+</head>
+<body>
+    <h1>位置情報の取得</h1>
+    <p>あなたのいる場所は</p>
+    <p id="loc" class="position"></p>
+    <p>精度は半径 <span id="accuracy" class="position"></span> m</p>
+
+    <script>
+
+        function success(pos){
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const accuracy = pos.coords.accuracy;
+    
+            $('#loc').text(`緯度：${lat} 経度：${lng}`);
+            $('#accuracy').text(accuracy);
+        }
+    
+        function fail(pos){
+            let ErrMsg = "";
+            switch(pos.code){
+                case 1 : ErrMsg = "位置情報の利用が許可されていません";break;
+                case 2 : ErrMsg = "デバイスの位置が判定できません";break;
+                case 3 : ErrMsg = "タイムアウトしました";break;
+            }
+            alert(ErrMsg);
+        }
+    
+        navigator.geolocation.getCurrentPosition(success,fail);
+    </script>
+</body>
+
+
+</html>

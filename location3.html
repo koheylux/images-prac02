@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Get location</title>
+    <link rel="stylesheet" href="css/locationStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+</head>
+<body>
+    <!-- Geolocation API -->
+
+    <p>あなたのいる場所は</p>
+    <p>緯度 <span id="watLatitude"></span></p>
+    <p>経度 <span id="watLongitude"></span></p>
+    <p>精度は半径 <span id="watAccuracy"></span> m</p>
+    <p>高度 <span id="watAltitude"></span></p>
+    <p>精度は半径 <span id="watAltitudeAccuracy"></span></p>
+    <p>方角 <span id="watHeading"></span></p>
+    <p>速度 <span id="watSpeed"></span></p>
+    <p>取得時間 <span id="watDate"></span></p>
+    <br>
+    <p id="watErrMag"></p>
+
+    <script>
+    
+        //==================================================================================================
+        //  位置取得 成功時に実行される
+        //==================================================================================================
+        function cmanWatOk(argPos){
+            let cmanWatchID;            // watchPositionのオブジェクト
+            let cmanWatchLoopCnt = 0;   //【デモ用】デモを強制的に停止するためのカウンター
+            const cmanWatchLoopMax = 30;  //【デモ用】強制的にデモを止める回数
+    
+            // --- 取得した値を出力 ------------------------------------------------------------------------
+            document.getElementById("watLatitude").innerHTML         = argPos.coords.latitude;          // 緯度
+            document.getElementById("watLongitude").innerHTML        = argPos.coords.longitude;         // 経度
+            document.getElementById("watAccuracy").innerHTML         = argPos.coords.accuracy;          // 緯度・経度の誤差
+            document.getElementById("watAltitude").innerHTML         = argPos.coords.altitude;          // 高度
+            document.getElementById("watAltitudeAccuracy").innerHTML = argPos.coords.altitudeAccuracy;  // 高度の誤差
+            document.getElementById("watHeading").innerHTML          = argPos.coords.heading;           // 方角(0:北)
+            document.getElementById("watSpeed").innerHTML            = argPos.coords.speed;             // 速度
+            document.getElementById("watDate").innerHTML             = argPos.timestamp;                // 取得時間
+
+            //一定回数追跡で自動停止する -----------------------------------------------------
+            cmanWatchLoopCnt++;
+            if(cmanWatchLoopCnt> cmanWatchLoopMax){
+                navigator.geolocation.clearWatch(cmanWatchID);
+                document.getElementById("watDate").innerHTML += '<br><span style="color:blue">位置の追跡を停止しました。</span>';
+            }
+        }
+    
+        //==================================================================================================
+        //  位置取得 失敗時に実行される
+        //==================================================================================================
+        function cmanWatErr(argErr){
+            var wErrMsg = "";
+            switch(argErr.code){
+                case 1 : wErrMsg = "位置情報の利用が許可されていません";break;
+                case 2 : wErrMsg = "デバイスの位置が判定できません";break;
+                case 3 : wErrMsg = "タイムアウトしました";break;
+            }
+            if(wErrMsg == ""){wErrMsg = argErr.message;} 
+    
+            // --- エラーメッセージ出力 --------------------------------------------------------------------
+            document.getElementById("watErrMag").innerHTML = wErrMsg;
+        }
+        
+        navigator.geolocation.watchPosition(cmanWatOk,cmanWatErr);
+    </script>
+    
+
+</body>
+
+</html>
+
